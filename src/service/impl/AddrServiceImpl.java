@@ -93,6 +93,19 @@ public class AddrServiceImpl implements AddrService {
 		return rMap;
 	}
 
+	@Override
+	public Map<String, String> deleteAddr(HttpServletRequest request) throws IOException {
+		Map<String, String> addr = Command.fromJSON(request);
+		Map<String, String> rMap = new HashMap<>();
+		rMap.put("delete", "false");
+		rMap.put("msg", "삭제가 실패 하였습니다.");
+		if(adao.deleteAddr(addr)==1) {
+			rMap.put("delete", "true");
+			rMap.put("msg", "삭제가 성공 하였습니다.");
+		}
+		return rMap;
+	}
+
 }
 
 

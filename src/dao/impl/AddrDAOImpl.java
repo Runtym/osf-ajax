@@ -22,6 +22,7 @@ public class AddrDAOImpl implements AddrDAO {
 	private static String selectAddrCount = "select count(1) from address $where$";
 	private static String selectAddr = "select * from address where 1=1 and ad_num=?";
 	private static String updateAddr = "update address set ad_sido=?, ad_gugun=?, ad_bunji=?, ad_ho=?, ad_dong=?, ad_lee=? where ad_num=?";
+	private static String deleteAddr = "delete from address where ad_num=?";
 	@Override
 	public List<Map<String, String>> selectAddrList(Map<String, String> addr) {
 		String adDong = addr.get("ad_dong");
@@ -115,6 +116,20 @@ public class AddrDAOImpl implements AddrDAO {
 			ps.setString(5, addr.get("adDong"));
 			ps.setString(6, addr.get("adLee"));
 			ps.setString(7, addr.get("adNum"));
+			return ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			DBCon.close();
+		}
+		return 0;
+	}
+
+	@Override
+	public int deleteAddr(Map<String, String> addr) {
+		try {
+			PreparedStatement ps = DBCon.getCon().prepareStatement(deleteAddr);
+			ps.setString(1, addr.get("adNum"));
 			return ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();

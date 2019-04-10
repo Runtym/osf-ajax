@@ -27,6 +27,7 @@
 		<th>리</th>
 		<th>번지</th>
 		<th>호</th>
+		<th>삭제</th>
 	</tr>
 	<tbody id="tBody">
 	</tbody>
@@ -41,6 +42,7 @@
 		location.href='/views/addr2/list?pageCount=' + obj.value;
 	}
 	function view(adNum){
+		var xhr = new XMLHttpRequest();
 		xhr.open('GET','/addr2/view?ad_num=' + adNum);
 		xhr.onreadystatechange = function(){
 			if(xhr.readyState == 4){
@@ -52,7 +54,30 @@
 		xhr.send();
 	}
 
+	function deleteAddr(adNum){
+		var xhr = new XMLHttpRequest();
+		var inputs = document.querySelectorAll('input[id]');
+		var params = {adNum:adNum};
+		
+		xhr.open('POST','/addr2/delete');
+		xhr.setRequestHeader('Content-Type','application/json');
+		xhr.onreadystatechange = function(){
+			if(xhr.readyState===4){
+				if(xhr.status===200){
+					var res = JSON.parse(xhr.response);
+					alert(res.msg);
+					if(res.delete==='true'){
+						getList();
+					}else{
+						
+					}
+				}
+			}
+		}
+		xhr.send(JSON.stringify(params));
+	}
 	function updateAddr(){
+		var xhr = new XMLHttpRequest();
 		var inputs = document.querySelectorAll('input[id]');
 		var params = {};
 		for(var i=0;i<inputs.length;i++){
@@ -67,7 +92,8 @@
 					var res = JSON.parse(xhr.response);
 					alert(res.msg);
 					if(res.update==='true'){
-						
+						getList();
+						view(params.adNum);
 					}else{
 						
 					}
@@ -76,42 +102,46 @@
 		}
 		xhr.send(JSON.stringify(params));
 	}
-	var xhr = new XMLHttpRequest();
-	xhr.open('GET','/addr2/list?pageCount=${param.pageCount}&page=${param.page}&ad_dong=${param.ad_dong}');
-	xhr.onreadystatechange = function(){
-		if(xhr.readyState==4){
-			if(xhr.status==200){
-				console.log(xhr.response);
-				var res = JSON.parse(xhr.response);
-				document.querySelector('#pageCount').value = res.pageCount;
-				var html = '';
-				for(var addr of res.list){
-					html += '<tr>';
-					html += '<td>' + addr.ad_num + '</td>';
-					html += '<td>' + addr.ad_sido + '</td>';
-					html += '<td>' + addr.ad_gugun + '</td>';
-					html += '<td><a href="javascript:view(' + addr.ad_num + ')">' + addr.ad_dong + '</a></td>';
-					html += '<td>' + (addr.ad_lee?addr.ad_lee:'') + '</td>';
-					html += '<td>' + addr.ad_bunji + '</td>';
-					html += '<td>' + addr.ad_ho + '</td>';
-					html += '</tr>';
-				}
-				html +='<tr>';
-				html += '<td colspan="7">';
-				for(var i=res.fBlock;i<=res.lBlock;i++){
-					if(i==res.page){
-						html += '<b>[' + i + ']</b>';
-					}else{
-						html += '<a href="/views/addr2/list?pageCount=' + res.pageCount + '&page=' + i + '">[' + i + ']</a>';
+	function getList(){
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET','/addr2/list?pageCount=${param.pageCount}&page=${param.page}&ad_dong=${param.ad_dong}');
+		xhr.onreadystatechange = function(){
+			if(xhr.readyState==4){
+				if(xhr.status==200){
+					console.log(xhr.response);
+					var res = JSON.parse(xhr.response);
+					document.querySelector('#pageCount').value = res.pageCount;
+					var html = '';
+					for(var addr of res.list){
+						html += '<tr>';
+						html += '<td>' + addr.ad_num + '</td>';
+						html += '<td>' + addr.ad_sido + '</td>';
+						html += '<td>' + addr.ad_gugun + '</td>';
+						html += '<td><a href="javascript:view(' + addr.ad_num + ')">' + addr.ad_dong + '</a></td>';
+						html += '<td>' + (addr.ad_lee?addr.ad_lee:'') + '</td>';
+						html += '<td>' + addr.ad_bunji + '</td>';
+						html += '<td>' + addr.ad_ho + '</td>';
+						html += '<td><button onclick="deleteAddr(\'' + addr.ad_num + '\')">삭제</button></td>';
+						html += '</tr>';
 					}
+					html +='<tr>';
+					html += '<td colspan="8">';
+					for(var i=res.fBlock;i<=res.lBlock;i++){
+						if(i==res.page){
+							html += '<b>[' + i + ']</b>';
+						}else{
+							html += '<a href="/views/addr2/list?pageCount=' + res.pageCount + '&page=' + i + '">[' + i + ']</a>';
+						}
+					}
+					html += '</td>';
+					html +='</tr>';				
+					document.querySelector('#tBody').innerHTML = html;
 				}
-				html += '</td>';
-				html +='</tr>';				
-				document.querySelector('#tBody').innerHTML = html;
 			}
 		}
+		xhr.send();
 	}
-	xhr.send();
+	getList();
 </script>
 </body>
 </html>

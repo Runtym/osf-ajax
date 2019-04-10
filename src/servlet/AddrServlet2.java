@@ -50,6 +50,9 @@ public class AddrServlet2 extends HttpServlet {
 		if("update".equals(cmd)) {
 			Map<String,String> rMap = as.updateAddr(request);
 			Command.printJSON(response, rMap);
+		}else if("delete".equals(cmd)) {
+			Map<String,String> rMap = as.deleteAddr(request);
+			Command.printJSON(response, rMap);
 		}
 	}
  

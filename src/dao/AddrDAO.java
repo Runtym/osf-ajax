@@ -11,4 +11,5 @@ public interface AddrDAO {
 	public Map<String,String> selectAddr(Map<String,String> addr);
 	public int selectTotalAddrCnt(Map<String,String> addr);
 	public int updateAddr(Map<String,String> addr);
+	public int deleteAddr(Map<String,String> addr);
 }
