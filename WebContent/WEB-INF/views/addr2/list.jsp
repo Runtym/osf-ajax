@@ -41,7 +41,7 @@
 		location.href='/views/addr2/list?pageCount=' + obj.value;
 	}
 	function view(adNum){
-		xhr.open('GET','/views/addr2/view?ad_num=' + adNum);
+		xhr.open('GET','/addr2/view?ad_num=' + adNum);
 		xhr.onreadystatechange = function(){
 			if(xhr.readyState == 4){
 				if(xhr.status == 200){
@@ -52,8 +52,29 @@
 		xhr.send();
 	}
 
-	function closeTable(){
-		document.querySelector('#addrTable').style.display='none';
+	function updateAddr(){
+		var inputs = document.querySelectorAll('input[id]');
+		var params = {};
+		for(var i=0;i<inputs.length;i++){
+			var input = inputs[i];
+			params[input.id]=input.value;
+		}
+		xhr.open('POST','/addr2/update');
+		xhr.setRequestHeader('Content-Type','application/json');
+		xhr.onreadystatechange = function(){
+			if(xhr.readyState===4){
+				if(xhr.status===200){
+					var res = JSON.parse(xhr.response);
+					alert(res.msg);
+					if(res.update==='true'){
+						
+					}else{
+						
+					}
+				}
+			}
+		}
+		xhr.send(JSON.stringify(params));
 	}
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET','/addr2/list?pageCount=${param.pageCount}&page=${param.page}&ad_dong=${param.ad_dong}');

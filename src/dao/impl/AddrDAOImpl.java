@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import dao.AddrDAO;
 import db.DBCon;
 
@@ -19,7 +21,7 @@ public class AddrDAOImpl implements AddrDAO {
 			"where rown>=?" ;
 	private static String selectAddrCount = "select count(1) from address $where$";
 	private static String selectAddr = "select * from address where 1=1 and ad_num=?";
-	
+	private static String updateAddr = "update address set ad_sido=?, ad_gugun=?, ad_bunji=?, ad_ho=?, ad_dong=?, ad_lee=? where ad_num=?";
 	@Override
 	public List<Map<String, String>> selectAddrList(Map<String, String> addr) {
 		String adDong = addr.get("ad_dong");
@@ -100,6 +102,26 @@ public class AddrDAOImpl implements AddrDAO {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	@Override
+	public int updateAddr(Map<String,String> addr) {
+		try {
+			PreparedStatement ps = DBCon.getCon().prepareStatement(updateAddr);
+			ps.setString(1, addr.get("adSido"));
+			ps.setString(2, addr.get("adGugun"));
+			ps.setString(3, addr.get("adBunji"));
+			ps.setString(4, addr.get("adHo"));
+			ps.setString(5, addr.get("adDong"));
+			ps.setString(6, addr.get("adLee"));
+			ps.setString(7, addr.get("adNum"));
+			return ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			DBCon.close();
+		}
+		return 0;
 	}
 	
 }
